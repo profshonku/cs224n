@@ -58,7 +58,7 @@ if args.variant == 'vanilla':
     pass # TODO [part c]: Make some model here
 elif args.variant == 'synthesizer':
     pass # TODO [part g]: Make some other model here
-
+ 
 # From here on, your code should be identical independent of which
 # variant (vanilla or synthesizer) has been chosen.
 
