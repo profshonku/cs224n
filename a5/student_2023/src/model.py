@@ -101,7 +101,7 @@ class DownProjectBlock(nn.Module):
             nn.Linear(4 * config.n_embd, config.n_embd),
             nn.Dropout(config.resid_pdrop),
         )
-        self.C = nn.Parameter(nn.init.xavier_uniform_(torch.empty(1,config.bottleneck_dim, config.n_embd)))
+        self.C = nn.Parameter(nn.init.xavier_uniform_(torch.empty(1, config.bottleneck_dim, config.n_embd)))
 
 
     def forward(self, x_input):
@@ -113,7 +113,7 @@ class DownProjectBlock(nn.Module):
         ### Should be around 3-5 lines.
         #pass
         ### END YOUR CODE
-        x = x_input + self.attn(x_input, self.ln1(self.C))
+        x = self.attn(x_input, self.ln1(self.C))
         x = x + self.mlp(self.ln2(x))
         return x
     
@@ -153,7 +153,7 @@ class UpProjectBlock(nn.Module):
         ### Should be around 3-5 lines.
         #pass
         ### END YOUR CODE
-        x = y + self.attn(self.ln1(y), x_input)
+        x = self.attn(self.ln1(y), x_input)
         x = x + self.mlp(self.ln2(x))
         return x
     
