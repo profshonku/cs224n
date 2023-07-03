@@ -158,7 +158,7 @@ elif args.function == 'finetune':
                                     lr_decay=True,
                                     warmup_tokens=512*20,
                                     final_tokens=200*len(pretrain_dataset)*block_size,
-                                    num_workers=4,
+                                    num_workers=2,
                                     writer=writer)
                                      
     else:
@@ -170,7 +170,7 @@ elif args.function == 'finetune':
                                     lr_decay=True,
                                     warmup_tokens=512*20,
                                     final_tokens=200*len(pretrain_dataset)*block_size,
-                                    num_workers=4,
+                                    num_workers=2,
                                     writer=writer)
     trainer_ft = trainer.Trainer(model, ft_dataset, None, tconf)
     trainer_ft.train()
@@ -184,6 +184,7 @@ elif args.function == 'evaluate':
     assert args.reading_params_path is not None
     assert args.eval_corpus_path is not None
     model.load_state_dict(torch.load(args.reading_params_path))
+    #model.load_state_dict(torch.load(args.reading_params_path, map_location= device))
     correct = 0
     total = 0
     with open(args.outputs_path, 'w', encoding='utf-8') as fout:
