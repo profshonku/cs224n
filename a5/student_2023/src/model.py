@@ -92,7 +92,6 @@ class DownProjectBlock(nn.Module):
         ### Hint: Copy over the code from Block and make necessary modifications.
         #pass
         ### END YOUR CODE
-        super().__init__()
         self.ln1 = nn.LayerNorm(config.n_embd)
         self.ln2 = nn.LayerNorm(config.n_embd)
         self.attn = attention.CausalCrossAttention(config)
@@ -102,7 +101,7 @@ class DownProjectBlock(nn.Module):
             nn.Linear(4 * config.n_embd, config.n_embd),
             nn.Dropout(config.resid_pdrop),
         )
-        self.C = nn.Parameter(nn.init.xavier_uniform_(torch.empty(1,config.bottleneck_dim, config.n_embed)))
+        self.C = nn.Parameter(nn.init.xavier_uniform_(torch.empty(1,config.bottleneck_dim, config.n_embd)))
 
 
     def forward(self, x_input):
@@ -114,7 +113,7 @@ class DownProjectBlock(nn.Module):
         ### Should be around 3-5 lines.
         #pass
         ### END YOUR CODE
-        x = x + self.attn(self.ln1(x_input),self.ln1(self.C))
+        x = x_input + self.attn(x_input, self.ln1(self.C))
         x = x + self.mlp(self.ln2(x))
         return x
     
@@ -130,8 +129,19 @@ class UpProjectBlock(nn.Module):
         super().__init__()
         ### YOUR CODE HERE
         ### Hint: Copy over the code from Block and make necessary modifications.
-        pass
+        #pass
         ### END YOUR CODE
+        self.ln1 = nn.LayerNorm(config.n_embd)
+        self.ln2 = nn.LayerNorm(config.n_embd)
+        self.attn = attention.CausalCrossAttention(config)
+        self.mlp = nn.Sequential(
+            nn.Linear(config.n_embd, 4 * config.n_embd),
+            nn.GELU(),
+            nn.Linear(4 * config.n_embd, config.n_embd),
+            nn.Dropout(config.resid_pdrop),
+        )
+        #self.C = nn.Parameter(nn.init.xavier_uniform_(torch.empty(1,config.bottleneck_dim, config.n_embd)))
+
     
     def forward(self, y, x_input):
         """Hint: perform cross-attention between previous layer's output y and
@@ -143,6 +153,9 @@ class UpProjectBlock(nn.Module):
         ### Should be around 3-5 lines.
         #pass
         ### END YOUR CODE
+        x = y + self.attn(self.ln1(y), x_input)
+        x = x + self.mlp(self.ln2(x))
+        return x
     
 
 class GPT(nn.Module):
